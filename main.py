@@ -8,19 +8,13 @@ from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 import time
 
-
-# This program requires LEGO EV3 MicroPython v2.0 or higher.
-# Click "Open user guide" on the EV3 extension tab for more information.
-
-
-# Create your objects here.
 ev3 = EV3Brick()
-testmotor = Motor(Port.A)
+leftMotor = Motor(Port.C)
+rightMotor = Motor(Port.B)
 
-
-# Write your program here.
-ev3.speaker.beep()
-testmotor.run(1000)
-time.sleep(2)
-testmotor.hold()
-time.sleep(10)
+leftMotor.run_angle(200, -30, wait=False)
+rightMotor.run_angle(200, -30)
+rightMotor.run_angle(500, 360)
+rightMotor.run(200)
+leftMotor.run_angle(200, 1100)
+rightMotor.hold()
