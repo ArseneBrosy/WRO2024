@@ -12,6 +12,8 @@ FAST_SPEED = 750;
 SPEED = 500;
 SLOW_SPEED = 200;
 VERY_SLOW_SPEED = 50;
+WHITE_THRESHOLD = 15;
+BLACK_THRESHOLD = 70;
 #endregion
 
 ev3 = EV3Brick()
@@ -21,6 +23,10 @@ leftMotor = Motor(Port.C)
 rightMotor = Motor(Port.B)
 clawMotor = Motor(Port.D)
 liftMotor = Motor(Port.A)
+
+# Sensors
+leftColorSensor = ColorSensor(Port.S3)
+rightColorSensor = ColorSensor(Port.S2)
 
 #region Functions
 # Wheels
@@ -33,6 +39,19 @@ def run_time(speed, time):
     leftMotor.run(speed)
     rightMotor.run_time(speed, time)
     leftMotor.hold()
+
+def alignementLine(speed):
+    leftMotor.run(speed)
+    rightMotor.run(speed)
+    leftStopped = False
+    rightStopped = False
+    while not leftStopped or not rightStopped:
+        if leftColorSensor.reflection() < WHITE_THRESHOLD and not leftStopped:
+            leftMotor.hold()
+            leftStopped = True
+        if rightColorSensor.reflection() < WHITE_THRESHOLD and not rightStopped:
+            rightMotor.hold()
+            rightStopped = True
 
 # Claw
 def openClaw():
@@ -55,6 +74,11 @@ closeClaw()
 run_degree(SPEED, -360)
 ev3.speaker.beep()
 rightMotor.run_angle(SPEED, 360)
-ev3.speaker.beep()
 run_time(-SLOW_SPEED, 2000)
+alignementLine(VERY_SLOW_SPEED)
+leftMotor.run_angle(VERY_SLOW_SPEED, 100)                       
+leftMotor.run(VERY_SLOW_SPEED)
+while leftColorSensor.reflection() > WHITE_THRESHOLD:
+    pass
+leftMotor.hold()
 #endregion
