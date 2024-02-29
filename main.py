@@ -8,12 +8,12 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 import time
 
 #region Constants
-FAST_SPEED = 750;
 SPEED = 500;
 SLOW_SPEED = 200;
 VERY_SLOW_SPEED = 50;
 WHITE_THRESHOLD = 70;
 BLACK_THRESHOLD = 15;
+LINE_AVERAGE = 35
 KP = 2;
 #endregion
 
@@ -57,7 +57,7 @@ def alignementLine(speed):
 def followLine(speed, degree, sensor = 0):
     leftMotor.reset_angle(0)
     while leftMotor.angle() < degree:
-        error = (WHITE_THRESHOLD + BLACK_THRESHOLD / 2) - (leftColorSensor.reflection() if sensor == 0 else rightColorSensor.refletion())
+        error = LINE_AVERAGE - (leftColorSensor.reflection() if sensor == 0 else rightColorSensor.refletion())
         correction = error * KP
         leftMotor.run(speed - correction)
         rightMotor.run(speed + correction)
@@ -67,7 +67,7 @@ def followLine(speed, degree, sensor = 0):
 def followLineUntilLine(speed, sensor = 0):
     lineSensor = rightColorSensor if sensor == 0 else leftColorSensor
     while lineSensor.reflection() > BLACK_THRESHOLD:
-        error = (WHITE_THRESHOLD + BLACK_THRESHOLD / 2) - (leftColorSensor.reflection() if sensor == 0 else rightColorSensor.refletion())
+        error = LINE_AVERAGE - (leftColorSensor.reflection() if sensor == 0 else rightColorSensor.refletion())
         correction = error * KP
         leftMotor.run(speed - correction)
         rightMotor.run(speed + correction)
@@ -96,15 +96,23 @@ def programBase1():
     rightMotor.run_angle(SPEED, 360)
     runTime(-SLOW_SPEED, 2000)
     alignementLine(VERY_SLOW_SPEED)
-    leftMotor.run_angle(VERY_SLOW_SPEED, 100)                       
-    leftMotor.run(VERY_SLOW_SPEED)
-    while leftColorSensor.reflection() > WHITE_THRESHOLD:
+
+    leftMotor.run_angle(SLOW_SPEED, 460)
+    leftMotor.run(-SLOW_SPEED)
+    rightMotor.run(-SLOW_SPEED)
+    while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
-    leftMotor.hold()
-    runAngle(SLOW_SPEED, 70)
-    rightMotor.run_angle(SLOW_SPEED, 380)
-    followLine(SLOW_SPEED, 160)
+    runAngle(SLOW_SPEED, 400)
+    leftMotor.run(-SLOW_SPEED)
+    while leftColorSensor.reflection() > BLACK_THRESHOLD:
+        pass
+    followLine(SLOW_SPEED, 400)
     runAngle(SLOW_SPEED, 260)
     followLineUntilLine(SLOW_SPEED)
+    
+    leftMotor.run_angle(SLOW_SPEED, -480)
+    rightMotor.run_angle(SLOW_SPEED, -480)
+    runAngle(SLOW_SPEED, 50)
 
 programBase1()
+wait(2000)
