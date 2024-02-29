@@ -12,8 +12,9 @@ FAST_SPEED = 750;
 SPEED = 500;
 SLOW_SPEED = 200;
 VERY_SLOW_SPEED = 50;
-WHITE_THRESHOLD = 15;
-BLACK_THRESHOLD = 70;
+WHITE_THRESHOLD = 70;
+BLACK_THRESHOLD = 15;
+KP = 2;
 #endregion
 
 ev3 = EV3Brick()
@@ -30,12 +31,12 @@ rightColorSensor = ColorSensor(Port.S2)
 
 #region Functions
 # Wheels
-def run_degree(speed, degrees):
+def runAngle(speed, degrees):
     leftMotor.run(speed if degrees > 0 else -speed)
     rightMotor.run_angle(speed, degrees)
     leftMotor.hold()
 
-def run_time(speed, time):
+def runTime(speed, time):
     leftMotor.run(speed)
     rightMotor.run_time(speed, time)
     leftMotor.hold()
@@ -46,12 +47,32 @@ def alignementLine(speed):
     leftStopped = False
     rightStopped = False
     while not leftStopped or not rightStopped:
-        if leftColorSensor.reflection() < WHITE_THRESHOLD and not leftStopped:
+        if leftColorSensor.reflection() < BLACK_THRESHOLD and not leftStopped:
             leftMotor.hold()
             leftStopped = True
-        if rightColorSensor.reflection() < WHITE_THRESHOLD and not rightStopped:
+        if rightColorSensor.reflection() < BLACK_THRESHOLD and not rightStopped:
             rightMotor.hold()
             rightStopped = True
+
+def followLine(speed, degree, sensor = 0):
+    leftMotor.reset_angle(0)
+    while leftMotor.angle() < degree:
+        error = (WHITE_THRESHOLD + BLACK_THRESHOLD / 2) - (leftColorSensor.reflection() if sensor == 0 else rightColorSensor.refletion())
+        correction = error * KP
+        leftMotor.run(speed - correction)
+        rightMotor.run(speed + correction)
+    leftMotor.hold()
+    rightMotor.hold()
+
+def followLineUntilLine(speed, sensor = 0):
+    lineSensor = rightColorSensor if sensor == 0 else leftColorSensor
+    while lineSensor.reflection() > BLACK_THRESHOLD:
+        error = (WHITE_THRESHOLD + BLACK_THRESHOLD / 2) - (leftColorSensor.reflection() if sensor == 0 else rightColorSensor.refletion())
+        correction = error * KP
+        leftMotor.run(speed - correction)
+        rightMotor.run(speed + correction)
+    leftMotor.hold()
+    rightMotor.hold()
 
 # Claw
 def openClaw():
@@ -61,24 +82,29 @@ def closeClaw():
     clawMotor.run_time(-1000, 500)
 #endregion
 
-#region Program
-openClaw()
+def programBase1():
+    openClaw()
 
-# Take the blocks
-run_degree(VERY_SLOW_SPEED, -30)
-rightMotor.run_angle(SPEED, 360)
-run_degree(SLOW_SPEED, 1100)
-closeClaw()
+    # Take the blocks
+    runAngle(VERY_SLOW_SPEED, -30)
+    rightMotor.run_angle(SPEED, 360)
+    runAngle(SLOW_SPEED, 1100)
+    closeClaw()
 
-# Go to the red square
-run_degree(SPEED, -360)
-ev3.speaker.beep()
-rightMotor.run_angle(SPEED, 360)
-run_time(-SLOW_SPEED, 2000)
-alignementLine(VERY_SLOW_SPEED)
-leftMotor.run_angle(VERY_SLOW_SPEED, 100)                       
-leftMotor.run(VERY_SLOW_SPEED)
-while leftColorSensor.reflection() > WHITE_THRESHOLD:
-    pass
-leftMotor.hold()
-#endregion
+    # Go to the red square
+    runAngle(SPEED, -360)
+    rightMotor.run_angle(SPEED, 360)
+    runTime(-SLOW_SPEED, 2000)
+    alignementLine(VERY_SLOW_SPEED)
+    leftMotor.run_angle(VERY_SLOW_SPEED, 100)                       
+    leftMotor.run(VERY_SLOW_SPEED)
+    while leftColorSensor.reflection() > WHITE_THRESHOLD:
+        pass
+    leftMotor.hold()
+    runAngle(SLOW_SPEED, 70)
+    rightMotor.run_angle(SLOW_SPEED, 380)
+    followLine(SLOW_SPEED, 160)
+    runAngle(SLOW_SPEED, 260)
+    followLineUntilLine(SLOW_SPEED)
+
+programBase1()
