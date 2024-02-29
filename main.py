@@ -1,7 +1,6 @@
 #!/usr/bin/env pybricks-micropython
 from pybricks.hubs import EV3Brick
-from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
-                                 InfraredSensor, UltrasonicSensor, GyroSensor)
+from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor, InfraredSensor, UltrasonicSensor, GyroSensor)
 from pybricks.parameters import Port, Stop, Direction, Button, Color
 from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
@@ -16,10 +15,9 @@ rightMotor = Motor(Port.B)
 claw = Motor(Port.D)
 lift = Motor(Port.A)
 
-# Functions
-
+#region Functions
 # Wheels
-def move2Wheels(power, degrees):
+def run_degree(power, degrees):
     leftMotor.run(power)
     rightMotor.run_angle(power, degrees)
     leftMotor.hold()
@@ -30,13 +28,15 @@ def openClaw():
 
 def closeClaw():
     claw.run_time(-1000, 500)
+#endregion
 
-
+#region Program
 # Take the blocks
-move2Wheels(200, -30)
+run_degree(200, -30)
 
 rightMotor.run_angle(500, 360)
 
-move2Wheels(200, 1100)
+run_degree(200, 1100)
 
 closeClaw()
+#endregion
