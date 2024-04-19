@@ -74,12 +74,23 @@ def followLineUntilLine(speed, sensor = 0):
     leftMotor.hold()
     rightMotor.hold()
 
+def turn(speed, degrees):
+    leftMotor.run(speed if degrees > 0 else -speed)
+    rightMotor.run_angle(speed, -degrees)
+    leftMotor.hold()
+
 # Claw
 def openClaw():
     clawMotor.run_time(1000, 500)
 
 def closeClaw():
     clawMotor.run_time(-1000, 500)
+
+def raiseClaw(height):
+    liftMotor.run_angle(1000, height)
+
+def lowerClaw():
+    liftMotor.run_time(-1000, 2000)
 #endregion
 
 def programBase1():
@@ -113,6 +124,23 @@ def programBase1():
     leftMotor.run_angle(SLOW_SPEED, -480)
     rightMotor.run_angle(SLOW_SPEED, -480)
     runAngle(SLOW_SPEED, 50)
+
+    # Place 2 pieces
+    placePiece(0)
+    placePiece(1, 165, 10)
+
+def placePiece(height, distance = 0, correctionDegree = 0):
+    runAngle(VERY_SLOW_SPEED, 50)
+    runAngle(VERY_SLOW_SPEED, -50)
+    raiseClaw(480 * height)
+    runAngle(SLOW_SPEED, -distance)
+    turn(SLOW_SPEED, correctionDegree)
+    openClaw()
+    raiseClaw(500)
+    runAngle(VERY_SLOW_SPEED, 75 + max(distance, 70))
+    lowerClaw()
+    runAngle(VERY_SLOW_SPEED, 30)
+    closeClaw()
 
 programBase1()
 wait(2000)
