@@ -15,6 +15,7 @@ WHITE_THRESHOLD = 70;
 BLACK_THRESHOLD = 15;
 LINE_AVERAGE = 35
 KP = 2;
+HEIGHTS = [0, 480, 740, 1020]
 #endregion
 
 ev3 = EV3Brick()
@@ -127,20 +128,51 @@ def programBase1():
 
     # Place 2 pieces
     placePiece(0)
+    closeClaw()
+    placePiece(1, 165, 10)
+    closeClaw()
+
+    #Go to the yellow square
+    alignementLine(-SLOW_SPEED)
+    runAngle(SLOW_SPEED, 100)
+    rightMotor.run_angle(SPEED, -450)
+    alignementLine(-SLOW_SPEED)
+    rightMotor.run_angle(SPEED, 450)
+    alignementLine(-SLOW_SPEED)
+    runAngle(SLOW_SPEED, -200)
+
+    # Place 2 pieces
+    ev3.speaker.beep()
+    placePiece(0)
+    runAngle(VERY_SLOW_SPEED, 200)
+    closeClaw()
+    runAngle(VERY_SLOW_SPEED, -200)
     placePiece(1, 165, 10)
 
 def placePiece(height, distance = 0, correctionDegree = 0):
-    runAngle(VERY_SLOW_SPEED, 50)
-    runAngle(VERY_SLOW_SPEED, -50)
-    raiseClaw(480 * height)
+    runAngle(VERY_SLOW_SPEED, max(50 - distance, 0))
+    runAngle(VERY_SLOW_SPEED, -max(50 - distance, 0))
+    raiseClaw(HEIGHTS[height])
     runAngle(SLOW_SPEED, -distance)
     turn(SLOW_SPEED, correctionDegree)
     openClaw()
-    raiseClaw(500)
-    runAngle(VERY_SLOW_SPEED, 75 + max(distance, 70))
-    lowerClaw()
-    runAngle(VERY_SLOW_SPEED, 30)
-    closeClaw()
+    liftMotor.run_time(1000, 1000)
+    if height == 3:
+        runAngle(VERY_SLOW_SPEED, 200)
+        lowerClaw()
+    else: 
+        runAngle(VERY_SLOW_SPEED, 65 + max(distance, 80))
+        lowerClaw()
+        runAngle(VERY_SLOW_SPEED, 30)
 
-programBase1()
-wait(2000)
+def buildTower():
+    placePiece(0)
+    closeClaw()
+    placePiece(1, 165, 10)
+    closeClaw()
+    placePiece(2, 250)
+    closeClaw()
+    placePiece(3, 340)
+
+closeClaw()
+buildTower()
