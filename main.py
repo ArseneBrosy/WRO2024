@@ -8,14 +8,14 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 import time
 
 #region Constants
-SPEED = 500;
-SLOW_SPEED = 200;
-VERY_SLOW_SPEED = 50;
+SPEED = 400;
+SLOW_SPEED = 270;
+VERY_SLOW_SPEED = 100;
 WHITE_THRESHOLD = 70;
 BLACK_THRESHOLD = 15;
 LINE_AVERAGE = 35
 KP = 2;
-HEIGHTS = [0, 480, 740, 1020]
+HEIGHTS = [0, 480, 740, 1040]
 #endregion
 
 ev3 = EV3Brick()
@@ -92,62 +92,6 @@ def raiseClaw(height):
 
 def lowerClaw():
     liftMotor.run_time(-1000, 2000)
-#endregion
-
-def programBase1():
-    openClaw()
-
-    # Take the blocks
-    runAngle(VERY_SLOW_SPEED, -30)
-    rightMotor.run_angle(SPEED, 360)
-    runAngle(SLOW_SPEED, 1100)
-    closeClaw()
-
-    # Go to the red square
-    runAngle(SPEED, -360)
-    rightMotor.run_angle(SPEED, 360)
-    runTime(-SLOW_SPEED, 2000)
-    alignementLine(VERY_SLOW_SPEED)
-
-    leftMotor.run_angle(SLOW_SPEED, 460)
-    leftMotor.run(-SLOW_SPEED)
-    rightMotor.run(-SLOW_SPEED)
-    while leftColorSensor.reflection() > BLACK_THRESHOLD:
-        pass
-    runAngle(SLOW_SPEED, 400)
-    leftMotor.run(-SLOW_SPEED)
-    while leftColorSensor.reflection() > BLACK_THRESHOLD:
-        pass
-    followLine(SLOW_SPEED, 400)
-    runAngle(SLOW_SPEED, 260)
-    followLineUntilLine(SLOW_SPEED)
-    
-    leftMotor.run_angle(SLOW_SPEED, -480)
-    rightMotor.run_angle(SLOW_SPEED, -480)
-    runAngle(SLOW_SPEED, 50)
-
-    # Place 2 pieces
-    placePiece(0)
-    closeClaw()
-    placePiece(1, 165, 10)
-    closeClaw()
-
-    #Go to the yellow square
-    alignementLine(-SLOW_SPEED)
-    runAngle(SLOW_SPEED, 100)
-    rightMotor.run_angle(SPEED, -450)
-    alignementLine(-SLOW_SPEED)
-    rightMotor.run_angle(SPEED, 450)
-    alignementLine(-SLOW_SPEED)
-    runAngle(SLOW_SPEED, -200)
-
-    # Place 2 pieces
-    ev3.speaker.beep()
-    placePiece(0)
-    runAngle(VERY_SLOW_SPEED, 200)
-    closeClaw()
-    runAngle(VERY_SLOW_SPEED, -200)
-    placePiece(1, 165, 10)
 
 def placePiece(height, distance = 0, correctionDegree = 0):
     runAngle(VERY_SLOW_SPEED, max(50 - distance, 0))
@@ -173,6 +117,88 @@ def buildTower():
     placePiece(2, 250)
     closeClaw()
     placePiece(3, 340)
+#endregion
 
-closeClaw()
-buildTower()
+def programBase1():
+    openClaw()
+
+    # Take the blocks
+    runAngle(SLOW_SPEED, -20)
+    rightMotor.run_angle(SPEED, 340)
+    runAngle(SPEED, 650)
+
+    # Go to the 2 other pieces
+    runAngle(SPEED, -360)
+    rightMotor.run_angle(SPEED, 380)
+    alignementLine(SLOW_SPEED)
+
+    # align to line
+    leftMotor.run_angle(SPEED, 460)
+    leftMotor.run(-SLOW_SPEED)
+    rightMotor.run(-SLOW_SPEED)
+    while leftColorSensor.reflection() > BLACK_THRESHOLD:
+        pass
+    runAngle(SLOW_SPEED, 400)
+    leftMotor.run(-SLOW_SPEED)
+    while leftColorSensor.reflection() > BLACK_THRESHOLD:
+        pass
+
+    # follow line
+    followLine(SLOW_SPEED, 400)
+    runAngle(SLOW_SPEED, 260)
+    followLineUntilLine(SLOW_SPEED)
+
+    # align to line
+    rightMotor.hold()
+    leftMotor.run_angle(SLOW_SPEED, 100)
+    leftMotor.run(SLOW_SPEED)
+    while leftColorSensor.reflection() > BLACK_THRESHOLD:
+        pass
+    leftMotor.hold()
+    rightMotor.run_angle(SLOW_SPEED, 100)
+
+    # follow line
+    followLine(SLOW_SPEED, 200)
+
+    # align to pieces
+    runAngle(SLOW_SPEED, 200)
+    rightMotor.run_angle(SPEED, 420)
+    runAngle(SLOW_SPEED, 200)
+    rightMotor.run_angle(SPEED, 400)
+
+    # take the last 2 red pieces
+    runAngle(SPEED, 650)
+    closeClaw()
+
+    # Go to the red square
+    runAngle(SPEED, -360)
+    rightMotor.run_angle(SPEED, 380)
+    alignementLine(SLOW_SPEED)
+
+    # align to line
+    leftMotor.run_angle(SPEED, 460)
+    leftMotor.run(SLOW_SPEED)
+    rightMotor.run(SLOW_SPEED)
+    while leftColorSensor.reflection() > BLACK_THRESHOLD:
+        pass
+    runAngle(SLOW_SPEED, 280)
+    leftMotor.run(-SLOW_SPEED)
+    rightMotor.run(SLOW_SPEED)
+    while leftColorSensor.reflection() > BLACK_THRESHOLD:
+        pass
+
+    # follow line
+    followLine(SLOW_SPEED, 400)
+    runAngle(SLOW_SPEED, 100)
+
+    # align to square
+    rightMotor.run_angle(SPEED, 480)
+
+    # push the debrit
+    runAngle(SLOW_SPEED, -500)
+    runAngle(SLOW_SPEED, 270)
+
+    # build the tower
+    buildTower()
+
+programBase1()
