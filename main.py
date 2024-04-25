@@ -55,21 +55,21 @@ def alignementLine(speed):
             rightMotor.hold()
             rightStopped = True
 
-def followLine(speed, degree, sensor = 0):
+def followLine(speed, degree, sensor = 0, kp = KP):
     leftMotor.reset_angle(0)
     while leftMotor.angle() < degree:
-        error = LINE_AVERAGE - (leftColorSensor.reflection() if sensor == 0 else rightColorSensor.refletion())
-        correction = error * KP
+        error = LINE_AVERAGE - (leftColorSensor.reflection() if sensor == 0 else rightColorSensor.reflection())
+        correction = error * kp
         leftMotor.run(speed - correction)
         rightMotor.run(speed + correction)
     leftMotor.hold()
     rightMotor.hold()
 
-def followLineUntilLine(speed, sensor = 0):
+def followLineUntilLine(speed, sensor = 0, kp = KP):
     lineSensor = rightColorSensor if sensor == 0 else leftColorSensor
     while lineSensor.reflection() > BLACK_THRESHOLD:
-        error = LINE_AVERAGE - (leftColorSensor.reflection() if sensor == 0 else rightColorSensor.refletion())
-        correction = error * KP
+        error = LINE_AVERAGE - (leftColorSensor.reflection() if sensor == 0 else rightColorSensor.reflection())
+        correction = error * kp
         leftMotor.run(speed - correction)
         rightMotor.run(speed + correction)
     leftMotor.hold()
@@ -119,6 +119,7 @@ def buildTower():
     placePiece(3, 340)
 #endregion
 
+#region Program
 def waitForButton():
     ev3.screen.draw_text(0, 0, "Ready to start")
     while Button.CENTER not in ev3.buttons.pressed():
@@ -208,6 +209,25 @@ def programBase1():
     buildTower()
 
     # go to the 4 pieces of the second tower
+    leftMotor.run_angle(-SLOW_SPEED, 230, wait=False)
+    rightMotor.run_angle(SLOW_SPEED, 230)
+    alignementLine(-SLOW_SPEED)
+    rightMotor.run_angle(-SLOW_SPEED, 600)
+
+    # take the block
+    runAngle(SPEED, 1050)
+    closeClaw()
+
+    # go to the yellow square
+    runAngle(SLOW_SPEED, -700)
+    rightMotor.run_angle(-SLOW_SPEED, 420)
+    alignementLine(-SLOW_SPEED)
+    leftMotor.run_angle(-SLOW_SPEED, 240, wait = False)
+    rightMotor.run_angle(-SLOW_SPEED, 240)
+
+    # build the tower
+    buildTower()
 
 waitForButton()
 programBase1()
+#endregion
