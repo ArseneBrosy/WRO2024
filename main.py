@@ -119,6 +119,11 @@ def buildTower():
     placePiece(3, 340)
 #endregion
 
+def waitForButton():
+    ev3.screen.draw_text(0, 0, "Ready to start")
+    while Button.CENTER not in ev3.buttons.pressed():
+        pass
+
 def programBase1():
     openClaw()
 
@@ -138,8 +143,9 @@ def programBase1():
     rightMotor.run(-SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
-    runAngle(SLOW_SPEED, 400)
+    runAngle(SLOW_SPEED, 280)
     leftMotor.run(-SLOW_SPEED)
+    rightMotor.run(SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
 
@@ -201,4 +207,7 @@ def programBase1():
     # build the tower
     buildTower()
 
+    # go to the 4 pieces of the second tower
+
+waitForButton()
 programBase1()
