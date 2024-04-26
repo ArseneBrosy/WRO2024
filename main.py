@@ -159,9 +159,10 @@ def programBase1():
     rightMotor.run(SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
+    wait(75)
 
     # follow line
-    followLine(SLOW_SPEED, 100)
+    followLine(SLOW_SPEED, 230)
     runAngle(SLOW_SPEED, 260)
     followLineUntilLine(SLOW_SPEED)
 
