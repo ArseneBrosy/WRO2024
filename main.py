@@ -103,7 +103,6 @@ def placePiece(height, distance = 0, correctionDegree = 0):
     raiseClaw(HEIGHTS[height])
     runAngle(VERY_SLOW_SPEED, -distance)
     turn(SLOW_SPEED, correctionDegree)
-    ev3.speaker.beep()
     openClaw()
     liftMotor.run_time(1000, 700)
     if height == 3:
@@ -186,8 +185,7 @@ def programBase1():
     rightMotor.run_angle(SPEED, 400)
 
     # take the last 2 red pieces
-    runAngle(SPEED, 750)
-    ev3.speaker.beep()
+    runAngle(SPEED, 800)
     closeClaw()
 
     # Go to the red square
