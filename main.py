@@ -145,24 +145,23 @@ def programBase1():
     runAngle(SPEED, 700)
 
     # Go to the 2 other pieces
-    runAngle(SPEED, -360)
-    rightMotor.run_angle(SPEED, 380)
-    alignementLine(SLOW_SPEED)
-
-    # align to line
-    leftMotor.run_angle(SPEED, 440)
-    leftMotor.run(-SLOW_SPEED)
-    rightMotor.run(-SLOW_SPEED)
+    runAngle(SPEED, -560)
+    rightMotor.run_angle(SPEED, 280)
+    leftMotor.run(SLOW_SPEED)
+    rightMotor.run(SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
-    runAngle(SLOW_SPEED, 280)
+    wait(200)
+    while leftColorSensor.reflection() > BLACK_THRESHOLD:
+        pass
+    runAngle(SLOW_SPEED, 130)
     leftMotor.run(-SLOW_SPEED)
     rightMotor.run(SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
 
     # follow line
-    followLine(SLOW_SPEED, 400)
+    followLine(SLOW_SPEED, 100)
     runAngle(SLOW_SPEED, 260)
     followLineUntilLine(SLOW_SPEED)
 
