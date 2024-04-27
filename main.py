@@ -92,7 +92,12 @@ def closeClaw():
     clawMotor.run_time(-1000, 750)
 
 def raiseClaw(height):
-    liftMotor.run_angle(1000000, height)
+    liftMotor.reset_angle(0)
+    liftMotor.run(10000)
+    timer = StopWatch()
+    while liftMotor.angle() < height and timer.time() < 4000:
+        pass
+    liftMotor.hold()
 
 def lowerClaw(wait = False):
     liftMotor.run_time(-1000, 800 if wait else 2000, wait = wait)
@@ -100,8 +105,10 @@ def lowerClaw(wait = False):
 def placePiece(height, distance = 0, correctionDegree = 0):
     runAngle(VERY_SLOW_SPEED, max(50 - distance, 0))
     runAngle(VERY_SLOW_SPEED, -max(50 - distance, 0))
-    raiseClaw(HEIGHTS[height])
-    runAngle(VERY_SLOW_SPEED, -distance)
+    if height > 0:
+        raiseClaw(HEIGHTS[height])
+    if distance > 0:
+        runAngle(VERY_SLOW_SPEED, -distance)
     turn(SLOW_SPEED, correctionDegree)
     openClaw()
     liftMotor.run_time(1000, 700)
@@ -146,7 +153,7 @@ def programBase1():
 
     # Go to the 2 other pieces
     runAngle(SPEED, -560)
-    rightMotor.run_angle(SPEED, 280)
+    rightMotor.run_angle(SPEED, 220)
     leftMotor.run(SLOW_SPEED)
     rightMotor.run(SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
@@ -159,10 +166,10 @@ def programBase1():
     rightMotor.run(SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
-    wait(75)
+    wait(50)
 
     # follow line
-    followLine(SLOW_SPEED, 230)
+    followLine(SLOW_SPEED, 260)
     runAngle(SLOW_SPEED, 260)
     followLineUntilLine(SLOW_SPEED)
 
@@ -185,28 +192,30 @@ def programBase1():
     rightMotor.run_angle(SPEED, 400)
 
     # take the last 2 red pieces
-    runAngle(SPEED, 800)
+    runAngle(SPEED, 650)
     closeClaw()
 
     # Go to the red square
-    runAngle(SPEED, -360)
-    rightMotor.run_angle(SPEED, 380)
-    alignementLine(SLOW_SPEED)
-
-    # align to line
-    leftMotor.run_angle(SPEED, 460)
+    runAngle(SPEED, -560)
+    rightMotor.run_angle(SPEED, 190)
     leftMotor.run(SLOW_SPEED)
     rightMotor.run(SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
-    runAngle(SLOW_SPEED, 280)
+    wait(500)
+    while leftColorSensor.reflection() > BLACK_THRESHOLD:
+        pass
+    runAngle(SLOW_SPEED, 200)
     leftMotor.run(-SLOW_SPEED)
     rightMotor.run(SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
+    wait(50)
+    leftMotor.hold()
+    rightMotor.hold()
 
     # follow line
-    followLine(SLOW_SPEED, 400)
+    followLine(SLOW_SPEED, 175)
     runAngle(SLOW_SPEED, 100)
 
     # align to square
@@ -226,11 +235,11 @@ def programBase1():
     rightMotor.run_angle(-SLOW_SPEED, 600)
 
     # take the block
-    runAngle(SPEED, 1050)
+    runAngle(SPEED, 1150)
     closeClaw()
 
     # go to the yellow square
-    runAngle(SLOW_SPEED, -700)
+    runAngle(SLOW_SPEED, -580)
     rightMotor.run_angle(-SLOW_SPEED, 420)
     alignementLine(-SLOW_SPEED)
     leftMotor.run_angle(-SLOW_SPEED, 240, wait = False)
@@ -244,28 +253,30 @@ def programBase2():
 
     # Take the blocks
     runAngle(SLOW_SPEED, -40)
-    rightMotor.run_angle(SPEED, 340)
-    runAngle(SPEED, 700)
+    rightMotor.run_angle(SPEED, 370)
+    runAngle(SPEED, 800)
 
-    # Go to the 2 other pieces
-    runAngle(SPEED, -360)
-    rightMotor.run_angle(SPEED, 380)
-    alignementLine(SLOW_SPEED)
-
-    # align to line
-    leftMotor.run_angle(SPEED, 440)
+    # Go to the 2 red pieces
+    rightMotor.run_angle(SLOW_SPEED, -150)
+    runAngle(SPEED, -600)
+    rightMotor.run_angle(SPEED, 150)
     leftMotor.run(SLOW_SPEED)
     rightMotor.run(SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
-    runAngle(SLOW_SPEED, 280)
+    wait(500)
+    while leftColorSensor.reflection() > BLACK_THRESHOLD:
+        pass
+    runAngle(SLOW_SPEED, 130)
     leftMotor.run(-SLOW_SPEED)
     rightMotor.run(SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
+    wait(50)
 
     # follow line
-    followLine(SLOW_SPEED, 400)
+    followLine(SLOW_SPEED, 260)
+    rightMotor.run_angle(SLOW_SPEED, 40)
     runAngle(SLOW_SPEED, 260)
     followLineUntilLine(SLOW_SPEED)
 
@@ -285,52 +296,62 @@ def programBase2():
     rightMotor.run_angle(SPEED, 400)
 
     # take the last 2 red pieces
-    runAngle(SPEED, 700)
+    runAngle(SPEED, 750)
     closeClaw()
 
     # Go to the red square
-    runAngle(SPEED, -360)
-    rightMotor.run_angle(SPEED, 380)
-    alignementLine(SLOW_SPEED)
-
-    # align to line
-    leftMotor.run_angle(SPEED, 460)
-    leftMotor.run(-SLOW_SPEED)
-    rightMotor.run(-SLOW_SPEED)
+    rightMotor.run_angle(SLOW_SPEED, -150)
+    runAngle(SPEED, -830)
+    rightMotor.run_angle(SPEED, 200)
+    leftMotor.run(SLOW_SPEED)
+    rightMotor.run(SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
-    runAngle(SLOW_SPEED, 280)
+    wait(500)
+    while leftColorSensor.reflection() > BLACK_THRESHOLD:
+        pass
+    runAngle(SLOW_SPEED, 200)
     leftMotor.run(-SLOW_SPEED)
     rightMotor.run(SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
+    wait(50)
+    leftMotor.hold()
+    rightMotor.hold()
 
     # follow line
-    followLine(SLOW_SPEED, 400)
-    runAngle(SLOW_SPEED, 100)
+    leftMotor.run(-SLOW_SPEED)
+    rightMotor.run(-SLOW_SPEED)
+    while rightColorSensor.reflection() > BLACK_THRESHOLD:
+        pass
+    runAngle(SLOW_SPEED, 50)
+    followLine(SLOW_SPEED, 450)
+    runAngle(SLOW_SPEED, 130)
 
     # align to square
-    rightMotor.run_angle(SPEED, 480)
+    leftMotor.run_angle(SPEED, 460)
 
     # push the debrit
-    runAngle(SLOW_SPEED, -500)
-    runAngle(SLOW_SPEED, 270)
+    runAngle(SLOW_SPEED, -780)
+    runAngle(SLOW_SPEED, 320)
 
     # build the tower
     buildTower()
 
+    '''
     # go to the 4 pieces of the second tower
-    leftMotor.run_angle(-SLOW_SPEED, 230, wait=False)
-    rightMotor.run_angle(SLOW_SPEED, 230)
+    leftMotor.run_angle(SLOW_SPEED, 300, wait=False)
+    rightMotor.run_angle(-SLOW_SPEED, 300)
+    runAngle(SLOW_SPEED, -500)
     alignementLine(-SLOW_SPEED)
     rightMotor.run_angle(-SLOW_SPEED, 600)
 
     # take the block
-    runAngle(SPEED, 1050)
+    runAngle(SPEED, 1150)
     closeClaw()
 
     # go to the yellow square
-    runAngle(SLOW_SPEED, -700)
+    runAngle(SLOW_SPEED, -580)
     rightMotor.run_angle(-SLOW_SPEED, 420)
     alignementLine(-SLOW_SPEED)
     leftMotor.run_angle(-SLOW_SPEED, 240, wait = False)
@@ -338,7 +359,8 @@ def programBase2():
 
     # build the tower
     buildTower()
+    '''
 
 waitForButton()
-programBase1()
+programBase2()
 #endregion
