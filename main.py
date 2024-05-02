@@ -103,8 +103,8 @@ def lowerClaw(wait = False):
     liftMotor.run_time(-1000, 800 if wait else 2000, wait = wait)
 
 def placePiece(height, distance = 0, correctionDegree = 0):
-    runAngle(VERY_SLOW_SPEED, max(50 - distance, 0))
-    runAngle(VERY_SLOW_SPEED, -max(50 - distance, 0))
+    runAngle(VERY_SLOW_SPEED, max(100 - distance, 0))
+    runAngle(VERY_SLOW_SPEED, -max(100 - distance, 0))
     if height > 0:
         raiseClaw(HEIGHTS[height])
     if distance > 0:
@@ -292,7 +292,7 @@ def programBase2():
     # align to pieces
     runAngle(SLOW_SPEED, 200)
     rightMotor.run_angle(SPEED, 420)
-    runAngle(SLOW_SPEED, 200)
+    runAngle(SLOW_SPEED, 250)
     rightMotor.run_angle(SPEED, 400)
 
     # take the last 2 red pieces
@@ -301,13 +301,14 @@ def programBase2():
 
     # Go to the red square
     rightMotor.run_angle(SLOW_SPEED, -150)
-    runAngle(SPEED, -830)
+    runAngle(SPEED, -700)
     rightMotor.run_angle(SPEED, 200)
+    runAngle(SPEED, -150)
     leftMotor.run(SLOW_SPEED)
     rightMotor.run(SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
-    wait(500)
+    wait(250)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
     runAngle(SLOW_SPEED, 200)
@@ -326,17 +327,27 @@ def programBase2():
         pass
     runAngle(SLOW_SPEED, 50)
     followLine(SLOW_SPEED, 450)
-    runAngle(SLOW_SPEED, 130)
+    runAngle(SLOW_SPEED, 110)
 
     # align to square
-    leftMotor.run_angle(SPEED, 460)
+    leftMotor.run_angle(SPEED, 440)
 
     # push the debrit
     runAngle(SLOW_SPEED, -780)
-    runAngle(SLOW_SPEED, 320)
+    runAngle(SLOW_SPEED, 340)
 
     # build the tower
     buildTower()
+
+    # push the second debrit
+    runAngle(SPEED, 2000)
+
+    # push the third debrit
+    leftMotor.run_angle(SLOW_SPEED, 230, wait=False)
+    rightMotor.run_angle(-SLOW_SPEED, 230)
+
+    runAngle(SPEED, -500)
+
 
     '''
     # go to the 4 pieces of the second tower
