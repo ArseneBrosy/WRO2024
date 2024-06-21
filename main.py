@@ -8,9 +8,9 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 import time
 
 #region Constants
-SPEED = 400;
-SLOW_SPEED = 270;
-VERY_SLOW_SPEED = 100;
+SPEED = 700;
+SLOW_SPEED = 400;
+VERY_SLOW_SPEED = 200;
 WHITE_THRESHOLD = 70;
 BLACK_THRESHOLD = 15;
 LINE_AVERAGE = 35
@@ -40,6 +40,8 @@ def runAngle(speed, degrees):
     '''
     leftMotor.run_angle(speed, degrees, wait = False)
     rightMotor.run_angle(speed, degrees)
+    leftMotor.hold()
+    rightMotor.hold()
 
 def runTime(speed, time):
     leftMotor.run(speed)
@@ -132,6 +134,7 @@ def buildTower():
     placePiece(2, 260)
     closeClaw()
     placePiece(3, 350, False)
+
 #endregion
 
 #region Program
@@ -254,12 +257,12 @@ def programBase2():
     # Take the blocks
     runAngle(SLOW_SPEED, -40)
     rightMotor.run_angle(SPEED, 370)
-    runAngle(SPEED, 800)
+    runAngle(SPEED, 700)
 
     # Go to the 2 red pieces
     rightMotor.run_angle(SLOW_SPEED, -150)
     runAngle(SPEED, -600)
-    rightMotor.run_angle(SPEED, 150)
+    rightMotor.run_angle(SPEED, 230)
     leftMotor.run(SLOW_SPEED)
     rightMotor.run(SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
@@ -268,15 +271,15 @@ def programBase2():
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
     runAngle(SLOW_SPEED, 130)
-    leftMotor.run(-SLOW_SPEED)
-    rightMotor.run(SLOW_SPEED)
+    leftMotor.run(-VERY_SLOW_SPEED)
+    rightMotor.run(VERY_SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
     wait(50)
 
     # follow line
     followLine(SLOW_SPEED, 260)
-    rightMotor.run_angle(SLOW_SPEED, 40)
+    rightMotor.run_angle(SLOW_SPEED, 30)
     runAngle(SLOW_SPEED, 260)
     followLineUntilLine(SLOW_SPEED)
 
@@ -290,27 +293,24 @@ def programBase2():
     leftMotor.hold()
 
     # align to pieces
-    runAngle(SLOW_SPEED, 200)
+    runAngle(SLOW_SPEED, 300)
     rightMotor.run_angle(SPEED, 420)
     runAngle(SLOW_SPEED, 250)
     rightMotor.run_angle(SPEED, 400)
 
     # take the last 2 red pieces
-    runAngle(SPEED, 750)
+    runAngle(SPEED, 800)
     closeClaw()
 
     # Go to the red square
     rightMotor.run_angle(SLOW_SPEED, -150)
-    runAngle(SPEED, -700)
-    rightMotor.run_angle(SPEED, 200)
-    runAngle(SPEED, -150)
+    runAngle(SPEED, -600)
+    rightMotor.run_angle(SPEED, 250)
     leftMotor.run(SLOW_SPEED)
     rightMotor.run(SLOW_SPEED)
     while leftColorSensor.reflection() > BLACK_THRESHOLD:
         pass
     wait(250)
-    while leftColorSensor.reflection() > BLACK_THRESHOLD:
-        pass
     runAngle(SLOW_SPEED, 200)
     leftMotor.run(-SLOW_SPEED)
     rightMotor.run(SLOW_SPEED)
@@ -347,7 +347,6 @@ def programBase2():
     rightMotor.run_angle(-SLOW_SPEED, 230)
 
     runAngle(SPEED, -500)
-
 
     '''
     # go to the 4 pieces of the second tower
